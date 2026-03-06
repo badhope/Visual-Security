@@ -1,0 +1,396 @@
+/* 
+ * 响应式设计优化补丁
+ * 针对移动端和不同设备进行优化
+ */
+
+/* ==================== 移动端优化 ==================== */
+
+/* 小屏手机 (≤375px) */
+@media (max-width: 375px) {
+    :root {
+        --font-size-base: 14px;
+        --font-size-lg: 16px;
+        --font-size-xl: 20px;
+    }
+    
+    .font-display {
+        font-size: 1.5rem !important;
+    }
+    
+    .nav-link {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+    
+    .illusion-btn {
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+    
+    .level-badge {
+        width: 45px;
+        height: 45px;
+        top: 10px;
+        right: 10px;
+    }
+    
+    .exp-bar-container {
+        width: 120px;
+        top: 65px;
+        right: 10px;
+    }
+    
+    .glass-card-advanced {
+        border-radius: var(--radius-lg);
+        padding: 16px;
+    }
+    
+    /* 优化触摸目标 */
+    button, a {
+        min-height: 44px;
+        min-width: 44px;
+    }
+}
+
+/* 标准手机 (376px - 640px) */
+@media (min-width: 376px) and (max-width: 640px) {
+    .grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .md\:grid-cols-2,
+    .md\:grid-cols-3,
+    .md\:grid-cols-4 {
+        grid-template-columns: 1fr;
+    }
+    
+    .lg\:grid-cols-2,
+    .lg\:grid-cols-3,
+    .lg\:grid-cols-4 {
+        grid-template-columns: 1fr;
+    }
+    
+    /* 导航优化 */
+    .nav-link {
+        padding: 8px 12px;
+    }
+    
+    /* 卡片优化 */
+    .illusion-card {
+        margin-bottom: 1rem;
+    }
+    
+    /* 按钮优化 */
+    .gradient-button,
+    .neon-button,
+    .liquid-button {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* 平板 (641px - 1024px) */
+@media (min-width: 641px) and (max-width: 1024px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .lg\:grid-cols-3,
+    .lg\:grid-cols-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .max-w-7xl {
+        max-width: 90%;
+    }
+    
+    /* 导航优化 */
+    .nav-link {
+        padding: 10px 16px;
+    }
+}
+
+/* ==================== 横屏优化 ==================== */
+
+@media (max-height: 500px) and (orientation: landscape) {
+    .level-badge,
+    .exp-bar-container {
+        display: none;
+    }
+    
+    nav {
+        padding: 8px 16px !important;
+    }
+    
+    main {
+        padding-top: 80px !important;
+    }
+    
+    .page {
+        padding: 1rem;
+    }
+}
+
+/* ==================== 触摸设备优化 ==================== */
+
+@media (hover: none) and (pointer: coarse) {
+    /* 移除悬停效果 */
+    .hover-lift:hover {
+        transform: none;
+    }
+    
+    .glass-card-advanced:hover {
+        transform: none;
+        box-shadow: var(--glass-shadow);
+    }
+    
+    /* 增大触摸目标 */
+    button, 
+    a, 
+    input, 
+    select, 
+    textarea {
+        min-height: 48px;
+        min-width: 48px;
+        padding: 12px 16px;
+    }
+    
+    /* 优化输入框 */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    textarea {
+        font-size: 16px; /* 防止 iOS 缩放 */
+    }
+}
+
+/* ==================== 高 DPI 屏幕优化 ==================== */
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .gpu-accelerated {
+        transform: translateZ(0);
+        backface-visibility: hidden;
+    }
+    
+    /* 优化字体渲染 */
+    body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+/* ==================== 深色模式支持 ==================== */
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-primary: #0a0a12;
+        --bg-secondary: #12121f;
+        --text-primary: #ffffff;
+        --text-secondary: #a0a0a0;
+    }
+    
+    body {
+        background: var(--bg-primary);
+        color: var(--text-primary);
+    }
+    
+    .glass-card-advanced {
+        background: rgba(255, 255, 255, 0.02);
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    :root {
+        --bg-primary: #ffffff;
+        --bg-secondary: #f5f5f5;
+        --text-primary: #1a1a1a;
+        --text-secondary: #4a4a4a;
+    }
+}
+
+/* ==================== 减少动画偏好 ==================== */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    
+    .animated-gradient-bg {
+        animation: none;
+        background: var(--bg-void);
+    }
+    
+    .particle-bg {
+        display: none;
+    }
+    
+    .aurora-bg {
+        display: none;
+    }
+}
+
+/* ==================== 打印样式 ==================== */
+
+@media print {
+    body {
+        background: white;
+        color: black;
+    }
+    
+    nav,
+    footer,
+    .no-print {
+        display: none !important;
+    }
+    
+    .glass-card-advanced {
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+    
+    a {
+        text-decoration: underline;
+    }
+    
+    a[href]::after {
+        content: " (" attr(href) ")";
+    }
+}
+
+/* ==================== 无障碍优化 ==================== */
+
+/* 焦点增强 */
+@media (prefers-contrast: high) {
+    *:focus-visible {
+        outline: 3px solid #00f5d4;
+        outline-offset: 3px;
+    }
+    
+    .nav-link:focus-visible,
+    button:focus-visible {
+        border-color: #00f5d4;
+        box-shadow: 0 0 0 3px rgba(0, 245, 212, 0.3);
+    }
+}
+
+/* ==================== 特定设备优化 ==================== */
+
+/* iPhone SE (第一代) */
+@media (max-width: 320px) {
+    .font-display {
+        font-size: 1.25rem !important;
+    }
+    
+    h1 {
+        font-size: 1.5rem !important;
+    }
+    
+    h2 {
+        font-size: 1.25rem !important;
+    }
+}
+
+/* iPad Pro */
+@media (min-width: 1024px) and (max-width: 1366px) {
+    .max-w-7xl {
+        max-width: 95%;
+    }
+}
+
+/* 大屏幕桌面 */
+@media (min-width: 1920px) {
+    :root {
+        --font-size-base: 18px;
+        --font-size-lg: 20px;
+        --font-size-xl: 24px;
+    }
+    
+    .max-w-7xl {
+        max-width: 1600px;
+    }
+}
+
+/* ==================== 性能优化提示 ==================== */
+
+/* 关键渲染路径优化 */
+.critical {
+    contain: content;
+}
+
+/* 避免布局偏移 */
+img, video, canvas {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 优化滚动性能 */
+.scroll-smooth {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* 硬件加速 */
+.hw-accelerate {
+    transform: translate3d(0, 0, 0);
+    will-change: transform;
+}
+
+/* ==================== 安全区域适配 ==================== */
+
+/* iPhone X 及以上 */
+@supports (padding: max(0px)) {
+    body {
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+    }
+    
+    nav {
+        padding-top: max(20px, env(safe-area-inset-top));
+    }
+    
+    footer {
+        padding-bottom: max(20px, env(safe-area-inset-bottom));
+    }
+}
+
+/* ==================== 网络状态优化 ==================== */
+
+/* 慢速网络提示 */
+.slow-network .lazy-load {
+    opacity: 0.5;
+}
+
+/* 离线状态 */
+.offline .online-only {
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+/* ==================== 方向锁定提示 ==================== */
+
+.orientation-lock-hint {
+    display: none;
+}
+
+@media (orientation: portrait) and (max-height: 500px) {
+    .orientation-lock-hint {
+        display: block;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.9);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        z-index: 99999;
+        text-align: center;
+    }
+}

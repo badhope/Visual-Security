@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视觉欺骗艺术馆 - 探索不可能的世界</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'void': '#0a0a12',
+                        'abyss': '#12121f',
+                        'neon-cyan': '#00f5d4',
+                        'neon-pink': '#ff006e',
+                        'neon-purple': '#8338ec',
+                        'neon-yellow': '#ffbe0b',
+                        'glass': 'rgba(255, 255, 255, 0.05)',
+                        'glass-border': 'rgba(255, 255, 255, 0.1)'
+                    },
+                    fontFamily: {
+                        'display': ['Orbitron', 'sans-serif'],
+                        'body': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- 自定义 CSS -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/illusions.css">
+    <link rel="stylesheet" href="css/enhanced.css">
+</head>
+<body class="bg-animated min-h-screen text-white">
+    <!-- 加载屏幕 -->
+    <div id="loading-screen"></div>
+    
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-card">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3 cursor-pointer" onclick="window.router.navigateTo('home')">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-neon-cyan to-neon-purple flex items-center justify-center">
+                        <i class="fas fa-eye text-white"></i>
+                    </div>
+                    <span class="font-display font-bold text-xl">视觉欺骗艺术馆</span>
+                </div>
+                
+                <div class="hidden md:flex items-center gap-2">
+                    <a class="nav-link active" data-page="home">首页</a>
+                    <a class="nav-link" data-page="gallery">图库</a>
+                    <a class="nav-link" data-page="learn">学习中心</a>
+                    <a class="nav-link" data-page="about">关于</a>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <!-- 游戏化 UI -->
+                    <div id="gamification-ui" class="flex items-center gap-4">
+                        <div class="level-badge" onclick="window.app.showAchievements()" title="点击查看成就">
+                            <span class="level-number" id="level-number">1</span>
+                            <span class="level-title">等级</span>
+                        </div>
+                        <div class="exp-bar-container">
+                            <div class="exp-bar" id="exp-bar"></div>
+                            <div class="exp-text" id="exp-text">0 / 100</div>
+                        </div>
+                    </div>
+                    <span class="text-sm text-gray-400 hidden sm:block">
+                        已探索：<span id="explored-count" class="text-neon-cyan font-bold">0</span> / <span id="total-count">25</span>
+                    </span>
+                    <button class="illusion-btn creator-mode-btn" onclick="window.app.showCreatorMode()" title="创作模式">
+                        <i class="fas fa-magic"></i>
+                    </button>
+                    <button class="md:hidden text-white" id="mobile-menu-btn">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 移动端菜单 -->
+            <div id="mobile-menu" class="md:hidden mt-4 pb-2 hidden">
+                <div class="flex flex-col gap-2">
+                    <a class="nav-link active" data-page="home">首页</a>
+                    <a class="nav-link" data-page="gallery">图库</a>
+                    <a class="nav-link" data-page="learn">学习中心</a>
+                    <a class="nav-link" data-page="about">关于</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="pt-24 pb-12 px-4 relative z-10">
+        <div class="max-w-7xl mx-auto">
+            
+            <!-- 首页 -->
+            <div id="page-home" class="page active">
+                <!-- Hero 区域 -->
+                <section class="text-center mb-16">
+                    <h1 class="font-display text-4xl md:text-6xl font-black mb-6 bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-pink bg-clip-text text-transparent">
+                        探索不可能的世界
+                    </h1>
+                    <p class="text-gray-400 text-lg max-w-3xl mx-auto mb-8">
+                        欢迎来到视觉欺骗艺术馆，这里汇集了人类历史上最迷人的视觉错觉与不可能图形。
+                        通过互动体验和深度学习，揭开大脑感知世界的神秘面纱。
+                    </p>
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <button onclick="window.router.navigateTo('gallery')" class="illusion-btn px-8 py-3">
+                            <i class="fas fa-compass mr-2"></i>开始探索
+                        </button>
+                        <button onclick="window.router.navigateTo('learn')" class="illusion-btn px-8 py-3">
+                            <i class="fas fa-book mr-2"></i>学习原理
+                        </button>
+                        <button onclick="window.tourGuide.start()" class="illusion-btn px-8 py-3" id="tour-btn">
+                            <i class="fas fa-map-signs mr-2"></i>新手引导
+                        </button>
+                    </div>
+                </section>
+                
+                <!-- 特色内容 -->
+                <section class="grid md:grid-cols-3 gap-6 mb-16">
+                    <div class="glass-card p-6 hover-lift">
+                        <div class="text-4xl mb-4">🎨</div>
+                        <h3 class="font-display text-xl font-bold mb-3">25+ 视觉错觉</h3>
+                        <p class="text-gray-400">从经典到现代，从几何到认知，体验多样化的视觉奇迹</p>
+                    </div>
+                    <div class="glass-card p-6 hover-lift">
+                        <div class="text-4xl mb-4">🧠</div>
+                        <h3 class="font-display text-xl font-bold mb-3">科学原理解析</h3>
+                        <p class="text-gray-400">深入神经科学、数学、物理学角度，理解错觉背后的机制</p>
+                    </div>
+                    <div class="glass-card p-6 hover-lift">
+                        <div class="text-4xl mb-4">🎮</div>
+                        <h3 class="font-display text-xl font-bold mb-3">游戏化体验</h3>
+                        <p class="text-gray-400">通过成就系统和等级机制，让学习变得更有趣</p>
+                    </div>
+                </section>
+            </div>
+            
+            <!-- 图库页面 -->
+            <div id="page-gallery" class="page">
+                <div class="text-center mb-12">
+                    <h2 class="font-display text-3xl font-bold mb-4">视觉错觉图库</h2>
+                    <p class="text-gray-400 mb-8">点击卡片探索每个错觉的奥秘</p>
+                    
+                    <!-- 分类筛选 -->
+                    <div class="flex flex-wrap justify-center gap-3 mb-8">
+                        <button class="illusion-btn active" onclick="window.router.filterGallery('all')">全部</button>
+                        <button class="illusion-btn" onclick="window.router.filterGallery('impossible')">不可能图形</button>
+                        <button class="illusion-btn" onclick="window.router.filterGallery('geometric')">几何错觉</button>
+                        <button class="illusion-btn" onclick="window.router.filterGallery('motion')">运动错觉</button>
+                        <button class="illusion-btn" onclick="window.router.filterGallery('cognitive')">认知错觉</button>
+                    </div>
+                </div>
+                
+                <!-- 错觉卡片网格 -->
+                <div id="gallery-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- 由 JavaScript 动态生成 -->
+                </div>
+            </div>
+            
+            <!-- 学习中心 -->
+            <div id="page-learn" class="page">
+                <div class="text-center mb-12">
+                    <h2 class="font-display text-3xl font-bold mb-4">学习中心</h2>
+                    <p class="text-gray-400">从多个学科角度理解视觉错觉的科学原理</p>
+                </div>
+                
+                <div class="grid md:grid-cols-4 gap-6 mb-12">
+                    <button class="glass-card p-6 hover-lift learn-nav-btn active" onclick="window.router.switchLearningModule('neuroscience')">
+                        <i class="fas fa-brain text-3xl mb-3" style="color: #00f5d4;"></i>
+                        <h3 class="font-bold">神经科学</h3>
+                    </button>
+                    <button class="glass-card p-6 hover-lift learn-nav-btn" onclick="window.router.switchLearningModule('mathematics')">
+                        <i class="fas fa-calculator text-3xl mb-3" style="color: #ff006e;"></i>
+                        <h3 class="font-bold">数学原理</h3>
+                    </button>
+                    <button class="glass-card p-6 hover-lift learn-nav-btn" onclick="window.router.switchLearningModule('physics')">
+                        <i class="fas fa-atom text-3xl mb-3" style="color: #8338ec;"></i>
+                        <h3 class="font-bold">物理学</h3>
+                    </button>
+                    <button class="glass-card p-6 hover-lift learn-nav-btn" onclick="window.router.switchLearningModule('art')">
+                        <i class="fas fa-palette text-3xl mb-3" style="color: #ffbe0b;"></i>
+                        <h3 class="font-bold">艺术应用</h3>
+                    </button>
+                </div>
+                
+                <div id="learning-content" class="glass-card p-8">
+                    <!-- 学习内容动态加载 -->
+                </div>
+            </div>
+            
+            <!-- 详情页 -->
+            <div id="page-detail" class="page">
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <div class="perspective-container glass-card p-8">
+                        <div id="illusion-detail-canvas" class="w-full h-96 flex items-center justify-center">
+                            <!-- 错觉渲染区域 -->
+                        </div>
+                        <div id="illusion-controls" class="mt-6 flex flex-wrap gap-3 justify-center">
+                            <!-- 互动控制按钮 -->
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h2 id="detail-title" class="font-display text-3xl font-bold mb-4"></h2>
+                        <div id="detail-meta" class="flex flex-wrap gap-3 mb-6">
+                            <!-- 元信息 -->
+                        </div>
+                        <div id="detail-principle" class="glass-card p-6 mb-6">
+                            <!-- 原理说明 -->
+                        </div>
+                        <div id="detail-science" class="glass-card p-6">
+                            <!-- 科学解释 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 关于页面 -->
+            <div id="page-about" class="page">
+                <div class="max-w-4xl mx-auto">
+                    <h2 class="font-display text-3xl font-bold mb-8 text-center">关于视觉欺骗艺术馆</h2>
+                    
+                    <div class="glass-card p-8 mb-8">
+                        <h3 class="font-display text-xl font-bold mb-4">项目介绍</h3>
+                        <p class="text-gray-400 mb-4">
+                            视觉欺骗艺术馆是一个交互式科普平台，致力于通过现代化的展示方式，
+                            让公众理解人类视觉系统的工作原理和局限性。
+                        </p>
+                        <p class="text-gray-400">
+                            我们结合了神经科学、心理学、数学和物理学等多个学科的知识，
+                            为用户提供沉浸式的探索体验。
+                        </p>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-6 mb-8">
+                        <div class="glass-card p-6">
+                            <h4 class="font-bold mb-3"><i class="fas fa-bullseye text-neon-cyan mr-2"></i>使命</h4>
+                            <p class="text-gray-400">让复杂的科学原理变得直观有趣，激发公众对认知科学兴趣</p>
+                        </div>
+                        <div class="glass-card p-6">
+                            <h4 class="font-bold mb-3"><i class="fas fa-eye text-neon-pink mr-2"></i>愿景</h4>
+                            <p class="text-gray-400">成为最优质的视觉科学科普平台，连接科学与大众</p>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card p-8">
+                        <h3 class="font-display text-xl font-bold mb-4">技术栈</h3>
+                        <div class="grid md:grid-cols-3 gap-4 text-sm">
+                            <div>
+                                <span class="text-neon-cyan font-bold">前端框架:</span>
+                                <span class="text-gray-400 ml-2">原生 JavaScript (ES6+)</span>
+                            </div>
+                            <div>
+                                <span class="text-neon-pink font-bold">样式:</span>
+                                <span class="text-gray-400 ml-2">Tailwind CSS + 自定义 CSS</span>
+                            </div>
+                            <div>
+                                <span class="text-neon-purple font-bold">架构:</span>
+                                <span class="text-gray-400 ml-2">模块化设计</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 成就面板 -->
+            <div id="page-achievements" class="page">
+                <h2 class="font-display text-3xl font-bold mb-8">我的成就</h2>
+                <div class="achievements-panel">
+                    <div class="mb-6">
+                        <h3 class="font-bold mb-4">成就进度：<span id="achievements-progress">0/0</span></h3>
+                        <div class="progress-bar">
+                            <div class="progress" id="achievements-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div id="achievements-grid" class="achievements-grid">
+                        <!-- 成就卡片动态生成 -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 创作模式 -->
+            <div id="page-creator" class="page">
+                <h2 class="font-display text-3xl font-bold mb-8">创作模式</h2>
+                <div class="creator-mode-container">
+                    <div class="creator-toolbar">
+                        <!-- 工具栏动态生成 -->
+                    </div>
+                    <div class="creator-canvas">
+                        <!-- 画布区域 -->
+                    </div>
+                    <div class="creator-controls">
+                        <!-- 控制面板 -->
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+    
+    <!-- 页脚 -->
+    <footer class="glass-card mt-12">
+        <div class="max-w-7xl mx-auto px-6 py-8">
+            <div class="text-center text-gray-400">
+                <p>© 2024 视觉欺骗艺术馆 | 探索人类感知的边界</p>
+                <p class="text-sm mt-2">Made with ❤️ for Science Education</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- 成就通知 -->
+    <div id="achievement-notification" class="achievement-notification">
+        <div class="icon"><i class="fas fa-trophy"></i></div>
+        <div class="content">
+            <div class="title">成就解锁!</div>
+            <div class="description"></div>
+            <div class="points">+0 XP</div>
+        </div>
+    </div>
+    
+    <!-- 粒子容器 -->
+    <div id="particle-container" class="particle-container"></div>
+    
+    <!-- JavaScript 模块 -->
+    <script type="module">
+        // 导入所有模块
+        import illusions from './js/data/illusions.js';
+        import advancedIllusions from './js/data/advanced-illusions.js';
+        import renderer from './js/modules/renderer.js';
+        import advancedRenderer from './js/modules/advanced-renderer.js';
+        import router from './js/modules/router.js';
+        import gallery from './js/components/gallery.js';
+        import gamification from './js/modules/gamification.js';
+        import { creatorMode, shareSystem } from './js/modules/creator-mode.js';
+        import { tourGuide, toastSystem, loadingScreen, helpSystem } from './js/components/ui-enhancements.js';
+        import { cacheManager, preloader, LazyLoader } from './js/utils/performance.js';
+        
+        // 合并错觉数据
+        window.illusions = [...illusions, ...advancedIllusions];
+        window.renderer = { ...renderer, ...advancedRenderer };
+        window.router = router;
+        window.gallery = gallery;
+        window.gamification = gamification;
+        window.creatorMode = creatorMode;
+        window.shareSystem = shareSystem;
+        window.tourGuide = tourGuide;
+        window.toastSystem = toastSystem;
+        window.loadingScreen = loadingScreen;
+        window.helpSystem = helpSystem;
+        
+        // 初始化应用
+        class EnhancedApp {
+            constructor() {
+                this.initialized = false;
+            }
+            
+            async init() {
+                if (this.initialized) return;
+                
+                // 显示加载屏幕
+                loadingScreen.show();
+                
+                console.log('Initializing Enhanced Visual Illusion Art Gallery...');
+                
+                // 初始化游戏化系统
+                gamification.init();
+                this.setupGamificationUI();
+                
+                // 初始化 UI 增强
+                tourGuide.init();
+                toastSystem.init();
+                shareSystem.init();
+                
+                // 初始化性能优化
+                const lazyLoader = new LazyLoader();
+                lazyLoader.init();
+                
+                // 初始化核心模块
+                router.init();
+                gallery.init();
+                
+                // 注册全局函数
+                this.setupGlobalFunctions();
+                
+                // 设置事件监听
+                this.setupEventListeners();
+                
+                // 检查新手引导
+                setTimeout(() => {
+                    loadingScreen.hide();
+                    if (tourGuide.shouldShow()) {
+                        setTimeout(() => {
+                            tourGuide.start();
+                        }, 1000);
+                    }
+                }, 1500);
+                
+                this.initialized = true;
+                console.log('Enhanced App initialized successfully!');
+            }
+            
+            /**
+             * 设置游戏化 UI
+             */
+            setupGamificationUI() {
+                const state = gamification.getState();
+                document.getElementById('level-number').textContent = state.level;
+                
+                const levelInfo = gamification.getLevelInfo();
+                const expProgress = ((state.exp - levelInfo.minExp) / (levelInfo.maxExp - levelInfo.minExp)) * 100;
+                document.getElementById('exp-bar').style.width = `${expProgress}%`;
+                document.getElementById('exp-text').textContent = `${Math.floor(state.exp)} / ${levelInfo.maxExp}`;
+                
+                // 监听游戏化事件
+                gamification.onExpChange = (exp, level) => {
+                    document.getElementById('level-number').textContent = level;
+                    const info = gamification.getLevelInfo();
+                    const progress = ((exp - info.minExp) / (info.maxExp - info.minExp)) * 100;
+                    document.getElementById('exp-bar').style.width = `${progress}%`;
+                    document.getElementById('exp-text').textContent = `${Math.floor(exp)} / ${info.maxExp}`;
+                };
+                
+                gamification.onAchievementUnlocked = (achievement) => {
+                    this.showAchievementNotification(achievement);
+                };
+                
+                gamification.onLevelUp = (level) => {
+                    toastSystem.show(`恭喜升级！当前等级：${level}`, 'success');
+                };
+            }
+            
+            /**
+             * 显示成就通知
+             */
+            showAchievementNotification(achievement) {
+                const notification = document.getElementById('achievement-notification');
+                notification.querySelector('.description').textContent = achievement.title;
+                notification.querySelector('.points').textContent = `+${achievement.points} XP`;
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 4000);
+            }
+            
+            /**
+             * 设置全局函数
+             */
+            setupGlobalFunctions() {
+                window.app = {
+                    showAchievements: () => {
+                        router.navigateTo('achievements');
+                        this.renderAchievements();
+                    },
+                    showCreatorMode: () => {
+                        router.navigateTo('creator');
+                        setTimeout(() => {
+                            const container = document.querySelector('.creator-mode-container');
+                            if (container && !creatorMode.canvas) {
+                                creatorMode.init(container);
+                            }
+                        }, 100);
+                    },
+                    renderAchievements: () => {
+                        const achievements = gamification.getAllAchievements();
+                        const unlocked = achievements.filter(a => a.unlocked);
+                        
+                        document.getElementById('achievements-progress').textContent = `${unlocked.length}/${achievements.length}`;
+                        document.getElementById('achievements-bar').style.width = `${(unlocked.length / achievements.length) * 100}%`;
+                        
+                        const grid = document.getElementById('achievements-grid');
+                        grid.innerHTML = achievements.map(a => `
+                            <div class="achievement-card ${a.unlocked ? 'unlocked' : 'locked'}">
+                                <div class="icon">
+                                    <i class="fas ${a.icon}"></i>
+                                </div>
+                                <div class="info">
+                                    <div class="name">${a.title}</div>
+                                    <div class="description">${a.description}</div>
+                                    <div class="points">+${a.points} XP</div>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                };
+            }
+            
+            /**
+             * 设置事件监听
+             */
+            setupEventListeners() {
+                // 移动端菜单切换
+                document.getElementById('mobile-menu-btn')?.addEventListener('click', () => {
+                    document.getElementById('mobile-menu').classList.toggle('hidden');
+                });
+                
+                // 导航链接点击事件
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        const page = e.target.dataset.page;
+                        if (page) {
+                            router.navigateTo(page);
+                        }
+                    });
+                });
+                
+                // 键盘快捷键
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        const currentPage = router.getCurrentPage();
+                        if (currentPage !== 'home') {
+                            router.navigateTo('home');
+                        }
+                    }
+                    if (e.key === 'h' && e.ctrlKey) {
+                        e.preventDefault();
+                        helpSystem.show('navigation');
+                    }
+                });
+                
+                // 页面可见性变化时保存状态
+                document.addEventListener('visibilitychange', () => {
+                    if (document.visibilityState === 'hidden') {
+                        gamification.saveState();
+                    }
+                });
+            }
+        }
+        
+        // 创建并初始化应用
+        const app = new EnhancedApp();
+        window.app = app;
+        
+        // DOM 加载完成后初始化
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => app.init());
+        } else {
+            app.init();
+        }
+    </script>
+</body>
+</html>
